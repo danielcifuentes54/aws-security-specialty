@@ -78,6 +78,62 @@ Information about the AWS services that are required in the AWS Security Special
   * protocol flooding
   * Request flooding
 
+### Compromised AWS Resources
+
+* EC2 Instance:
+  * Steps to address compromised instances:
+    * Capture instance metadata
+    * Enable termination protection
+    * Isolate the instance (no outbound traffic authorized)
+    * Detach the instance from any ASG 
+    * Deregister the instance from any ELB
+    * Snapshot the EBS volumes
+    * Tag the EC2 instance
+* Investigations types:
+  * offline investigation
+  * online investigation
+
+### Compromised AWS Credentials
+
+* Identify the IAM user using GuardDuty
+* Rotate the exposed AWS credentials
+* Invalidate temporary credentials by **attaching an explicit Deny policy** to the affected IAM user with an STS date condition
+* Check cloudtrail logs for other unauthorized activity
+* Review your AWS resources (e.g. delete unauthorized resources)
+* Verify your AWS account information
+
+### EC2 Key Pairs
+
+* The public key is stored in ~/.ssh/authorized_keys (on the EC2 instance)
+* The private key is downloaded and then deleted from AWS
+* Keys pairs do not get deleted from EC2 instance's root volumes when the key pair is removed from the EC2 console
+* Launching an EC2 instance with prebuilt AMI, thje old key pair will exist alongside with the new key pair
+* Remediating Exposed EC2 Key Pairs:
+  * Remove all the public keys in ~/.ssh?authorized_keys on EC2 instances
+  * Create a new key pair and add its public to the ~/.ssh/authorized_keys file on all EC2 instances
+  * Note: Use a SSM run command to automate the process
+
+### EC2 Instance Connect
+
+* The EC2 instance connect API push one-time temporary public key (valid for 60 sec) on the instance metadata
+* The EC2 instance connect API try the connection through SSH
+* The EC2 instance checks the authorized_keys and also the instance metadata, so the connection is established
+* NOTE: The Instance's Security group needs to allow the AWS IP range for the service "EC2 instance connect API" (NO the browser's public IP)
+
+### EC2 Serial Console - Explanation
+
+* Use cases: troubleshoot boot, troubleshoot network configuration, analyze reboot issues.
+* Directly access you EC2 instance's serial port
+* Use with supported Nitro-based EC2 instances
+* Does NOT require any network capabilities
+* Must setup OS User and password
+* Only one session active per EC2 instance
+* Disabled by default
+
+### Lost EC2 Key Pair - Linux
+
+
+
 ---
 
 
