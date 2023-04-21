@@ -132,11 +132,55 @@ Information about the AWS services that are required in the AWS Security Special
 
 ### Lost EC2 Key Pair - Linux
 
+* Add a new ssh public key using EC2 User Data.
+* Using systems manager (AWSSupport_resetAccess). Must have SSM agent installed.
+* Using EC2 instance connect (store a permanent new public SSH key into ~/.ssh/authorized_keys).
+* Using EC2 serial console (store a permanent new public SSH key into ~/.ssh/authorized_keys).
+* Using EBS volume swap (Attach the EBS volume to a temporary EC2 instance as a secondary volume to store a permanent new public SSH key into ~/.ssh/authorized_keys).
+
+### Lost Password - Windows
+
+* Using EBS volume swap and delete the file located in %ProgramData%/Amazon/EC2Launch/state/.run-once if the AMI is before windows server 2016 you have to modify the file located in \ProgramFiles\Amazon\Ec2ConfigService\settings\config.xml.
+* Using EBS volume swap and install EC2Rescue Tools for windows server.
+* Using system manager with AWSSupport-RunEc2RescueForWindowsTools. AWSSupport-ResetAccess, or AWS-RunPowerShellScript command document
+
+### EC2 Rescue Tool
+
+* Linux:
+  * installation: manually or using AWSSupport-TroubleshootSSH
+  * use cases:
+    * Collect system utilization reports
+    * Collect logs and details
+    * Detect system problems
+    * Automatically remediate system problems
+* Windows:
+  * installation: manually or using AWSSupport-RunEc2RescueForWindowsTools
+  * use cases:
+    * Instance connectivity issues
+    * OS Boot issues
+    * Gather OS logs and configuration Files
+    * commom OS issues
+    * perform a restore
+
+### AWS Acceptable Use Policy (AUP)
+
+* Governs your use of the services offeredd by AWS
+* You may not use for:
+  * :no_entry_sign: Illegal or fraudelent activity
+  * :no_entry_sign: Violate the rights of others
+  * :no_entry_sign: Threaten, terrorism, violence, or other serious harm
+  * :no_entry_sign: Child sexual abuse content or activity.
+  * :no_entry_sign: Violate the security, integrity or availability for other networks and computers
+  * :no_entry_sign: Distribute, publish or facilitate the unsolicited mass emails (e.g. spams)
+* AWS will remove or disable any content that violates this policy
+
+### AWS Abuse Report
+
+* When you suspect that AWS resources are used for abusive or illegal purposes, you can create an abuse report, contact **AWS Trust & Safety Team**
+* if you recceive an email that your AWS resources are used for illegal activity, responddd to the email and explain how you're preventing this, if you don't respond within 24 hours, AWS might suspend your AWS account.
 
 
 ---
-
-
 
 ##  Security in the AWS cloud
 
