@@ -7,7 +7,7 @@ Information about the AWS services that are required in the AWS Security Special
 
 * AWS Security Fundamentals (Skill Builder) https://aws.amazon.com/es/training/digital/aws-security-fundamentals/
 
-## Incident Response
+## Threat Detection and Incident Response
 
 ### Amazon Guard Duty
 
@@ -25,7 +25,7 @@ Information about the AWS services that are required in the AWS Security Special
 ### AWS Security Hub
 
 * Central security tool to manage security across several AWS accounts and automate security checks
-* Automaticxally aggregates alerts in predifined or personal findings formats from various AWS services & AWS partner tools
+* Automatically aggregates alerts in predifined or personal findings formats from various AWS services & AWS partner tools
 * Can setup cross region aggregation
 * Can setup AWS organizations Integrations
 * AWS config must be enabled
@@ -36,7 +36,7 @@ Information about the AWS services that are required in the AWS Security Special
   * GuardDuty
   * AWS Health
   * IAM Access Analyzer
-  * Inspector
+  * Amazon Inspector
   * IoT Device Defender
   * Macie
   * SSM Patch Manager
@@ -107,9 +107,9 @@ Information about the AWS services that are required in the AWS Security Special
 * The public key is stored in ~/.ssh/authorized_keys (on the EC2 instance)
 * The private key is downloaded and then deleted from AWS
 * Keys pairs do not get deleted from EC2 instance's root volumes when the key pair is removed from the EC2 console
-* Launching an EC2 instance with prebuilt AMI, thje old key pair will exist alongside with the new key pair
+* Launching an EC2 instance with prebuilt AMI, the old key pair will exist alongside with the new key pair
 * Remediating Exposed EC2 Key Pairs:
-  * Remove all the public keys in ~/.ssh?authorized_keys on EC2 instances
+  * Remove all the public keys in ~/.ssh/authorized_keys on EC2 instances
   * Create a new key pair and add its public to the ~/.ssh/authorized_keys file on all EC2 instances
   * Note: Use a SSM run command to automate the process
 
@@ -166,18 +166,90 @@ Information about the AWS services that are required in the AWS Security Special
 
 * Governs your use of the services offeredd by AWS
 * You may not use for:
-  * :no_entry_sign: Illegal or fraudelent activity
-  * :no_entry_sign: Violate the rights of others
-  * :no_entry_sign: Threaten, terrorism, violence, or other serious harm
+  * :no_entry_sign: Illegal or fraudelent activity.
+  * :no_entry_sign: Violate the rights of others.
+  * :no_entry_sign: Threaten, terrorism, violence, or other serious harm.
   * :no_entry_sign: Child sexual abuse content or activity.
-  * :no_entry_sign: Violate the security, integrity or availability for other networks and computers
-  * :no_entry_sign: Distribute, publish or facilitate the unsolicited mass emails (e.g. spams)
-* AWS will remove or disable any content that violates this policy
+  * :no_entry_sign: Violate the security, integrity or availability for other networks and computers.
+  * :no_entry_sign: Distribute, publish or facilitate the unsolicited mass emails (e.g. spams).
+* AWS will remove or disable any content that violates this policy.
 
 ### AWS Abuse Report
 
 * When you suspect that AWS resources are used for abusive or illegal purposes, you can create an abuse report, contact **AWS Trust & Safety Team**
-* if you recceive an email that your AWS resources are used for illegal activity, responddd to the email and explain how you're preventing this, if you don't respond within 24 hours, AWS might suspend your AWS account.
+* if you recceive an email that your AWS resources are used for illegal activity, respond to the email and explain how you're preventing this, if you don't respond within 24 hours, AWS might suspend your AWS account.
+
+## Security Logging and monitoring
+
+### Amazon Inspector
+
+* Automated Security Assesments:
+  * For EC2 instances
+  * For container images push to Amazon ECR
+  * For Lambda functions
+* Reporting & integration with AWS Security hub
+* Send findings to Amazon Event Bridge
+* Package vulnerabilities (EC2, ECR & Lambda) - database of CVE
+* Newtwork reachability (EC2)
+* A risk score is associated with all vulnerabilities for prioritization 
+
+### Logging in AWS
+
+* Service logs:
+  * CloudTrail trails
+  * Config rules
+  * CloudWatch logs
+  * VPC flow logs
+  * ELB access logs
+  * Cloudfront logs
+  * WAF logs
+* Logs can be analyzed using AWS Athena if they're stored in S3
+
+
+### AWS Systems Manager Overview
+
+* Helps you manage your EC2 and on-premises system at scale
+* Easily detect problems 
+* Patching automation for enhanced compliance
+* Free service
+* We need to install the SSM agent onto the systems we control (installed by default on Amazon linux 2 AMI & some Ubuntu AMI), an SG rule is not neccesary
+* Resource Groups: Create, view or manage logical group of resources thanks to **tags**
+* SSM Documents: you can define actions and parameters to be executed in an EC2 instance, the document can be in JSON or YAML
+* SSM Automation: 
+  * Simplifies commom maintenance and deployment tasks of EC2 instances and other AWS resources
+  * it uses automation runbook: SSM documents of type automation
+  * Can be triggered:
+    * manually (AWS console), SDK, CLI
+    * Eventbridge
+    * On a schedule using Maintenance windows
+    * By AWS Config for rules remediations
+* SSM Parameter Store:
+  * Secure storage for configuration and secrets 
+  * It has a store hierarchy and you can get a secret from there
+    * /aws/reference/secretsmmanager/SECRET_ID
+  * Advanced parameters allows to assign parameters policies like a TTL (expiration date)
+* SSM Inventory & State Manager
+  * Collect data from your managed instances (EC2 / On Premises).
+  * Query data from multiple AWS accounts and regions.
+  * You can use a detailed view, where you will use AWS Athena, AWS Glue, and S3 to store and query data in a very specific way.
+  * State manager is to ensure that you fleet of instances are all in a state that you desire.
+* SSM Patch Manager
+  * Automated the process of patching managed instances
+  * Patch compliance report cacn be sent to S3
+  * You can setup a maintenance window to define a schedule for when to performm actions on your instances
+* Session Manager
+  * Allow to start a secure shell on you EC2 instance 
+  * Does not need SSH acces, bastion hosts, or SSH keys
+  * Log connections and executed commands
+  * IAM Permissions: control which users/groups can access session manager and which instances, use tags to restrict access to only specific EC2 instances, optionally, you can restrict commands a user can run in a session
+
+
+
+
+
+
+
+
 
 
 ---
