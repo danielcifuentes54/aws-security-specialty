@@ -243,9 +243,51 @@ Information about the AWS services that are required in the AWS Security Special
   * Log connections and executed commands
   * IAM Permissions: control which users/groups can access session manager and which instances, use tags to restrict access to only specific EC2 instances, optionally, you can restrict commands a user can run in a session
 
+### CloudWatch
 
+* Unified CloudWatch Agent:
+  * Collect logs to send to CloudWatch logs 
+  * Collect additional system-level metrics such as RAM, processes, used disk space, etc. (Default namespace for metrics is **CWAgent**)
+  * The agent has a plugin call procstat plugin that collect metrcis and monitor system utilization of individual processes (e.g amount of time the process use CPU), Metrics collected by procstat plugin bgin with **procstat** prefix
+  * Path to check cloudwatch unified agent logs: /opt/aws/amazon-cloudwatch-agent/logs
 
+* Cloud Watch Logs:
+  * Log Groups: Representing an application
+  * Log Stream: Representing an instance or container
+  * Can define expiration policies
+  * Logs can be send to:
+    * Amazon S3 (Batch export, )
+    * Kinesis Data Streams
+    * Kinesis Data Firehouse
+    * AWS Lambda
+    * Opensearch
+  * Logs are encrypted by default
+  * Sources:
+    * SDK, cloudwatch agent (unified and logs(deprecated))
+    * Elastic Beanstalk
+    * ECS
+    * AWS Lambda
+    * VPC Flow Logs
+    * API gateway
+    * Cloud Trail
+    * Route53
+  * CloudWatch Logs Insights: 
+    * Search and analyze log data stored in CloudWatch Logs
+    * It's a query engine, not a real-time engine
+  * CloudWatch Logs Subscriptions: You can filter wich logs are delivered to Lambda (then to opensearch) or kinesis (Data Streams or Data fire house), this is use to get real-time logs events.
 
+* CloudWatch Alarms
+  * Used to trigger notifications for any metric
+  * States:
+    * OK
+    * INSUFFICIENT_DATA
+    * ALARM
+  * Period: Length of time in seconds to evaluate the metric
+  * Targets: EC2 instance action, EC2 autoscaling, SNS, Systems Manager action
+  * Composite Alarms: Monitoring the states of multiple alarms using AND and OR conditions, it's helpful to reduce "alarm noise" 
+  * Alarms can be created based on CloudWatch Logs Metrics Filter
+
+* CloudWatch Contributor Insights: Helps you find top talkers and understand who/what is impacting system performance
 
 
 
