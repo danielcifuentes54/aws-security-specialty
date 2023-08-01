@@ -289,6 +289,31 @@ Information about the AWS services that are required in the AWS Security Special
 
 * CloudWatch Contributor Insights: Helps you find top talkers and understand who/what is impacting system performance
 
+### Amazon EventBridge (Formerly CloudWatch Events)
+
+* Sources
+  * Schedule: Cron jobs (scheduled scripts) --> Default Event Bus
+  * Event Pattern from an AWS services --> Default Event Bus
+  * AWS SaaS partner --> Partner Event Bus
+  * Custom Apps --> Custom Event Bus
+* Schemas: Defines the structure and content of events that are passed on an event bus in Amazon EventBridge, you can download code bindings
+
+### Amazon Athena
+
+* Serverless query service to analyze data stored in Amazon S3
+* Use standar SQL language to query the files (built on Presto (SQL Engine))
+* Commonly used with Amazon Quicksight for reporting/dashboards
+* Performance Improvement:
+  * Use columnar data for cost-savings (less scan)
+    * Apache Parquet or ORC is recommended
+    * use Amazon Glue to convert your data to Parquet or ORC
+  * Compress Data
+  * Partition dataset in S3 --> s3://athena-example/flight/parquet/year=1991/month=1/day=1/
+  * Use larger files (> 128 MB)
+* Federated Query: using a data source connector on lambda you can connect to different services like RDS, ElasticCache, Redshift, etc to run SQL queries and store the result on Amazon S3
+
+
+
 
 
 
