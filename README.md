@@ -313,6 +313,37 @@ Information about the AWS services that are required in the AWS Security Special
 * Federated Query: using a data source connector on lambda you can connect to different services like RDS, ElasticCache, Redshift, etc to run SQL queries and store the result on Amazon S3
 
 
+### AWS CloudTrail
+
+* Provides governance, compliance and audit for your AWS account.
+* Cloud Trail Events:
+  * Managment Events
+  * Data Events
+  * CloudTrail Insights Events --> Analyze events to try to find anomalies
+* All the cloud trail events can be send to EventBridge (cloud trail is not real time)
+* Log file integrity validation: you can create a digest file when you save the logs on S3, this digest file contains the hash for each log file
+* Organization Trails: A trail that will log all events for all AWS accounts in an AWS organization.
+* You can create alarms, using CloudWatch logs where are hosted all the cloud trail events
+* You can create an Athena table directly from CloudTrail
+
+
+### Amazon Macie
+
+* Helps to identify and alert you to sensitive data, such as personally identifiable information (PII)
+* Multi Account Strategy
+* Data identifiers:
+  * Managed Data Identifier: built-in, ex: credit card numbers, AWS credentials, bank accounts
+  * Custom Data Identifier: you define the criteria with a regex, keyword, proximity rule (you also can have an allowed alist)
+* Findings:
+  * A report of potential issue or sensitive data that Macie found, each finding has a severity rating, affected resource, datetime...
+  * it is stored for 90 days, or it can be stored in S3
+  * it can be reviewed using AWS console, EventBridge, or security hub.
+  * Types:
+    * Policy Findings
+    * Sensitive Data Findings
+
+
+
 
 
 
