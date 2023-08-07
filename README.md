@@ -342,6 +342,30 @@ Information about the AWS services that are required in the AWS Security Special
     * Policy Findings
     * Sensitive Data Findings
 
+### S3 Event Notifications
+
+* You can react events happening in S3
+* Event notifications: S3:ObjectCreated, S3:Replication...
+* You can create as many S3 events as desired, this events are delivered to SNS, SQS, Lambda, or EventBridge (all the events are sent to eventbridge)
+* IAM Permissions: you need to create a resource policy in the destination side to enable S3 send the events
+
+### VPC Flow logs
+
+* Capture information about IP traffic going into your interfaces (VPC, Subnet, or Elastic Network Interface (ENI)), also from AWS managed interfaces: ELB, RDS, ElastiCache, Redshift...
+* Flow logs data can be sent to S3, CW logs, and Kinesis Data Firehose.
+* VPC Flow Logs Architectures:
+  * Sent to CW logs --> CW contributor insights --> Top 10 Ip addresses
+  * Sent to CW logs --> Metric Filter --> CW Alarm --> Amazon SNS
+  * Sent to S3 bucket --> Amazon Athena --> Amazon QuickSight
+* Traffic not captures:
+  * Traffic to Amazon DNS server
+  * Traffic for Amazon Windows license activation
+  * Traffic to and from 169.254.169.254 for EC2 instance metadata
+  * Traffic to and from 169.254.169.123 for Amazon time sync service
+  * DHCP Traffic
+  * Mirrored Traffic
+  * Traffic to the VPC router reserved IP address (e.g 10.0.0.1)
+  * Traffic between VPC endpoint ENI and Network Load Balancer ENI
 
 
 
