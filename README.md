@@ -367,6 +367,38 @@ Information about the AWS services that are required in the AWS Security Special
   * Traffic to the VPC router reserved IP address (e.g 10.0.0.1)
   * Traffic between VPC endpoint ENI and Network Load Balancer ENI
 
+### VPC Traffic Mirroring
+
+* Allows you to capture and inspect network traffic in your VPC, routing the traffic to security appliances that you manage
+* Capture all the packets or capture the packets of your interest
+* Uses cases: content inspection, threat monitoring, troubleshooting
+* You can use VPC peering to send data across VPC's
+
+### VPC Network Access Analyzer
+
+* Helps to define conditions to check if the network meet your requirements
+* Network Access Scope: Json document that contains conditions to define your network security policy (e.g detect public databases).
+* Evaluate against the Json to find issues or demostrate compliance
+
+### Route53 Query Loggin
+
+* Log information about public DNS queries Route53 Resolver receives
+* only for public hosted zones
+* Logs are sent to Cloudwatch logs only
+
+### Route53 - Resolver Query Loggin
+
+* Logs all DNS queries
+* Can send logs to CloudWatch Logs, S3 Bucket, and Kinesis Data Firehose
+* Configurations can be shared with other AWS accounts using AWS Resource Manager (AWS RAM)
+
+### Amazon OpenSearch Service
+
+* Search any field, even partially matches, it is common use opensearch as a complement to another database
+* Two modes: managed cluster or serverless cluster
+* Security through Cognito & IAM, KMS encryption, TLS
+* Public Access: accesible from the internet, restrict access using Access Policies, Identity-based Policies, and Ip-based Policies
+* VPC Access: Specify VPC, Subnets, Security Groups, and IAM Role for the cluster, you need to use VPN, Transit Gateway, managed network, or proxy server to connect to the domain, you can restric access using Access Policies and identity-based policies
 
 
 
