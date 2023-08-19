@@ -401,12 +401,32 @@ Information about the AWS services that are required in the AWS Security Special
 * VPC Access: Specify VPC, Subnets, Security Groups, and IAM Role for the cluster, you need to use VPN, Transit Gateway, managed network, or proxy server to connect to the domain, you can restric access using Access Policies and identity-based policies
 
 
+## Infrastructure Security
 
+### Bastion Host
 
+* The bastion is an EC2 instance in the public subnet which is then connected to all other private subnets
+* Bastion host SG must allow inbound from the internet on port 22 from restricted CIDR, for example, the public CIDR of your corporation
 
+### Site to Site VPN
 
+* It is a connection between on-premises infrastructure and an AWS VPC, this connection is made through the public internet in an encrypted way.
+* Elements:
+  * Virtual Private Gateway (VGW): created and attached to the VPC
+  * Customer Gateway (CGW): Software application or physical device on customer side of the VPN connection (you need to use the public ip or if it is behind a NAT you must use de NAT public IP)
+* Important Step: You must enable route propagation for the VGW in the route table that is associated with your subnets
+* If you need ping your EC2 instances from on-premises, make sure you add the ICMP protocol in the inbound of your security groups
+
+### AWS Client VPN
+
+* Connect from your computer usiing OpenVPN to your private network in AWS and on-premises
+* Authentication types:
+  * Active Directory (Microsoft)
+  * Mutual Authentication (certificates)
+  * Single Sign on (SAML 2.0)
 
 ---
+
 
 ##  Security in the AWS cloud
 
