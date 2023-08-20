@@ -464,6 +464,34 @@ Information about the AWS services that are required in the AWS Security Special
 * Can be attached to both Interface Endpoint and Gateway Endpoint.
 * Use case: have an SQS queue that must allow only requests from an specific VPC Endpoint and the VPC Endoint must allow only requests from an specific PrincipalOrgId
 
+### PrivateLink (Endpoint Service)
+
+* Most secure & scalable way to expose a service to 1000s of VPC (own or other accounts).
+* Requires a network load balancer (service VPC) and ENI (Customer VPC) or GWLB.
+* the solutions can vve fault tolerant (multiple AZ).
+
+### Security Groups & NACLs
+
+* NACLs (stateless): Evaluate both inbound and outbound for each transaction.
+  * Are like firewall which control traffic from and to subnets
+  * One NACL per subnet, new subnets are assigned the Default NACL
+  * You define NACL rules (Rules have a number 1-32766 higher precedence with a lower number)
+  * Newly created NACLs will deny everything
+  * In news NACLs you have to be carefull in allowing **Ephemeral Ports**
+* Security Groups (stateful): Evaluate inbound/outbound based on transaction direction.
+  * Operates at the instance level
+  * All rules are evaluated before deciding whether to allow traffic.
+  * You can use **Managed Prefix List**
+* Modifying Security Group Rule **NEVER** disrupts its tracked connections, existing connections are kept until they time out, you must use NACLs to interrupt/block connections immediately
+
+>Notes:
+>
+>Ephemeral Ports: For any two endpoints to establish a connection, they must use a ports, the endpoint that send the request also send a ephemeral port (random port, different ranges between O.S) to receive the response.
+>
+>AWS Managed Prefix Lists are predefined sets of IP address ranges used for controlling traffic routing and security group rules. They simplify network management by providing consistent and frequently updated IP ranges for services like AWS services and public AWS endpoints.
+
+
+
 ---
 
 
