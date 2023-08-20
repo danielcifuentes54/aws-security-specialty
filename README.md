@@ -425,6 +425,45 @@ Information about the AWS services that are required in the AWS Security Special
   * Mutual Authentication (certificates)
   * Single Sign on (SAML 2.0)
 
+### VPC Peering
+
+* Privately connect two VPCs using AWS's network
+* Must not have overlaping CIDRs
+* VPC peering connection is not transitive
+* You must update route tables in each VPC's subnets to ensure EC2 instances can communicate with each other
+* You can create VPC peerings between different AWS accounts/regions
+* You can reference a security group in a peered VPC
+
+### DNS Resolution options
+
+* DNS Resolution in VPC:
+  * DNS Resolution (enableDnsSupport): Route53 DNS resolver, it queries the amazon provider DNS server at 169.254.169.253 true by default. if you don't have DNS support you need your own DNS server.
+  * DNS Hostname (enableDnsHostnames):
+    * By default it is true in default VPC and false in a new created VPC
+    * Won't do anything unless enableDnsSupport = true
+    * if true, assings public hostname to EC2 instance 
+  * if you use custom DNS domain names in a provate hosted zone in R53, you myst set bith attributes (enableDnsSupport, & enableDnsHostnames) to true
+
+### VPC Endpoints
+
+* Endpoints allow you to connect to AWS servicces using a private network instead of the public www network, they sacale horizontally and are redundant
+* Types:
+  * VPC endpoint gateway (S3 & DynamoDB):
+    * Must create one gateway per VPC
+    * Must update route tables entries (no security groups)
+  * VPC endpoint interface (all except DynamoDB)
+    * Provision an ENI that will have a private endpoint interafce hostname.
+    * Leverage Security Groups for security
+    * Interface can be accessed from Direct Connect and Site-to-site VPN
+
+### VPC Endpoint Policy
+
+* Controls which AWS principals (AWS accounts, IAM Users, IAM Roles) can use the VPC Endpoint to acccess AWS services.
+* Can restrict specific API calls on specific resources.
+* Does not override or replace Identity-based policies or service-specific policies.
+* Can be attached to both Interface Endpoint and Gateway Endpoint.
+* Use case: have an SQS queue that must allow only requests from an specific VPC Endpoint and the VPC Endoint must allow only requests from an specific PrincipalOrgId
+
 ---
 
 
