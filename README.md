@@ -442,7 +442,7 @@ Information about the AWS services that are required in the AWS Security Special
     * By default it is true in default VPC and false in a new created VPC
     * Won't do anything unless enableDnsSupport = true
     * if true, assings public hostname to EC2 instance 
-  * if you use custom DNS domain names in a provate hosted zone in R53, you myst set bith attributes (enableDnsSupport, & enableDnsHostnames) to true
+  * if you use custom DNS domain names in a private hosted zone in R53, you myst set bith attributes (enableDnsSupport, & enableDnsHostnames) to true
 
 ### VPC Endpoints
 
@@ -468,7 +468,7 @@ Information about the AWS services that are required in the AWS Security Special
 
 * Most secure & scalable way to expose a service to 1000s of VPC (own or other accounts).
 * Requires a network load balancer (service VPC) and ENI (Customer VPC) or GWLB.
-* the solutions can vve fault tolerant (multiple AZ).
+* the solutions can be fault tolerant (multiple AZ).
 
 ### Security Groups & NACLs
 
@@ -490,7 +490,44 @@ Information about the AWS services that are required in the AWS Security Special
 >
 >AWS Managed Prefix Lists are predefined sets of IP address ranges used for controlling traffic routing and security group rules. They simplify network management by providing consistent and frequently updated IP ranges for services like AWS services and public AWS endpoints.
 
+### AWS Transit Gateway
 
+* For having transitive peering between thousands of VPC and on-premises, hub-and-spoke (star) connection.
+* Regional resource, can work cross-region
+* Share cross-account (RAM)
+* you can peer transit gateway across regions
+* Route tables: limit which VPC can tal with other VPC
+* Works with Direct Connect, VPN Connections
+* Supports **IP Multicast** (not supported by any other AWS Service)
+* Site to site VPN **ECMP (Equal cost milti-path routing)** 
+  * Create multiple site-to-site VPN connections to increase the bandwitch of you connections to AWS.
+* You can share transit gateway with direccct connect 
+
+### AWS Cloudfront (CDN - Content Delivery Network)
+
+* 216 Point of presence globally (edge locations), improves user experienc, improving read performance, content is chached at the edge.
+* DDoS protection (because worlwide) integration with shield, and WAF
+* Origins:
+  * S3 bucket
+  * Custom origin http (ALB, EC2 instance, S3 website, Any http backend)
+* Great for **static** content that must be available everywhere.
+* You can have Geo Restriction
+* Signed:
+  * Useful if you want to distribute paid content to premium users over the world
+  * Signers:
+    * An AWS account that contains CloudFront Key Pair (Not recommended)
+    * Trusted Group (Recommended): Can leverage APIs to create and rotate keys (and IAM for API Security)
+  * types:
+    * URL
+      * one signed url per files
+    * Cookie
+      * one signed cookie for multiple files
+* Field Level Encryption: Adds addtional layer of security along with https using asymetric encryption (client encrypt with the public key and the backend server decrypt with the private key)
+* Origin Access Control: supports SSE-KMS natively
+* Authorization Header: configure cloudfront distribution to forward the Authorization header using cache policy (not supported for s3 origins)
+* Restrict access to ALB: have a **private custom header** to prevent direct access to your ELB (only access through CloudFront)
+  * You can also use SG on the ALB to allow only requests coming from CloudFront
+* Integration with Cognito: Use cognito to generate JWT and Lambda@Edge to validate those token and allow access to cloudfront
 
 ---
 
