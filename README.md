@@ -529,6 +529,47 @@ Information about the AWS services that are required in the AWS Security Special
   * You can also use SG on the ALB to allow only requests coming from CloudFront
 * Integration with Cognito: Use cognito to generate JWT and Lambda@Edge to validate those token and allow access to cloudfront
 
+
+### WAF (Web Application Firewall)
+
+* Protect your web applications from commom web exploits (Layer 7)
+* You can use it in: ALB, API Gateway, CloudFront, Appsync (protect GraphQL APIs)
+* WAF **is not** for DDoS protection.
+* Define Web ACL (Access Control List)
+* Rule Actions: Count | Allow | Block | CAPTCHA
+* Managed Rules: Library of over 190 managed rules, ready to use, these are managed by AWS and AWS maketplace sellers
+* Types: Baseline Rule Groups, Use-case Specific Rule Groups, IP Reputation Rule Groups, Bot Control Managed Rules
+* Logging: ClodWatch Logs, Amazon S3, Kinesis Data Firehose
+* You can create IP sets to be used in a managed rule
+
+### AWS Shield 
+
+* Protect from DDoS attack
+* AWS Shield Standard:
+  * Free service that provides protection from attacks such as SYN/UDP Floods, Reflection atacks and other layer 3/layer 4 attacks.
+* AWS Shield Advance
+  * $3000 per month per organization
+  * Protect against more sophisticated attack: EC2, ELB, CloudFront, AWS Global Accelerator, and route53
+  * 24/7 access to AWS DDoS response team (DRP)
+  * Automatic Application layer DDoS mitigation automatically creates, evaluates and deploys AWS WAF rules to mitigate layer 7 attacks.
+  * CloudWatch Metrics:
+    * DDoSDetected
+    * DDoSAttackBitsPerSecond
+    * DDoSAttackPacketsPerSecond
+    * DDoSAttackRequestPerSecond
+
+### AWS Firewall Manager
+
+* Manage rules in all accounts of an AWS organization
+* Security Policy: common set of security rules
+  * WAF rules
+  * Shield advance rules
+  * Security Groups
+  * AWS Network Firewall
+  * Amazon Route 53 Resolver
+  * Policies are created at the region level
+* Rules are applied to new resourcesas they are created
+
 ---
 
 
