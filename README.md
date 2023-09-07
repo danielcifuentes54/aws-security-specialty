@@ -570,6 +570,25 @@ Information about the AWS services that are required in the AWS Security Special
   * Policies are created at the region level
 * Rules are applied to new resourcesas they are created
 
+### AWS API Gateway
+
+* Is used to expose our services to the clients, it has a lot of features like caching, rate limit, versioning, authentication, and others.
+* Endpoints Types:
+  * Edge-Optimized
+  * Regional
+  * Private
+* Security:
+  * User Authentication:
+    * IAM Roles
+    * Cognito
+    * Custom Authorizer
+  * Customm domain name HTTPS
+  * Resource Policy
+    * Restric access from specific public IP addresses
+    * Restric access from specific VPC Endpoints
+  * Cross VPC same-region access: VPC Interface Endpoint (restric from specific vpc interface endpoint)
+
+
 ---
 
 
