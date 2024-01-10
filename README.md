@@ -29,7 +29,7 @@ Information about the AWS services that are required in the AWS Security Special
 * Can setup cross region aggregation
 * Can setup AWS organizations Integrations
 * AWS config must be enabled
-* Generate findings and continoous chechs against the rules in a set of supported security standards
+* Generate findings and continous chechs against the rules in a set of supported security standards
 * Integrations (Send findings to AWS security hub):
   * AWS config
   * Firewall Manager
@@ -235,11 +235,11 @@ Information about the AWS services that are required in the AWS Security Special
   * State manager is to ensure that you fleet of instances are all in a state that you desire.
 * SSM Patch Manager
   * Automated the process of patching managed instances
-  * Patch compliance report cacn be sent to S3
+  * Patch compliance report can be sent to S3
   * You can setup a maintenance window to define a schedule for when to performm actions on your instances
 * Session Manager
   * Allow to start a secure shell on you EC2 instance 
-  * Does not need SSH acces, bastion hosts, or SSH keys
+  * Does not need SSH access, bastion hosts, or SSH keys
   * Log connections and executed commands
   * IAM Permissions: control which users/groups can access session manager and which instances, use tags to restrict access to only specific EC2 instances, optionally, you can restrict commands a user can run in a session
 
@@ -587,6 +587,14 @@ Information about the AWS services that are required in the AWS Security Special
     * Restric access from specific public IP addresses
     * Restric access from specific VPC Endpoints
   * Cross VPC same-region access: VPC Interface Endpoint (restric from specific vpc interface endpoint)
+
+### AWS Artifact (not really a service)
+
+* It is not a service, it is a way to have access to AWS compliance documentation and AWS agreements
+* Artifact Reports: compliance documents from third-party auditors
+* Artifact Agreements: Status of AWS agreements
+
+### Route53 - DNSSEC
 
 
 ---
