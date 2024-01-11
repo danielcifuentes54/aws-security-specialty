@@ -256,7 +256,7 @@ Information about the AWS services that are required in the AWS Security Special
   * Log Stream: Representing an instance or container
   * Can define expiration policies
   * Logs can be send to:
-    * Amazon S3 (Batch export, )
+    * Amazon S3 (Batch export)
     * Kinesis Data Streams
     * Kinesis Data Firehouse
     * AWS Lambda
@@ -357,7 +357,7 @@ Information about the AWS services that are required in the AWS Security Special
   * Sent to CW logs --> CW contributor insights --> Top 10 Ip addresses
   * Sent to CW logs --> Metric Filter --> CW Alarm --> Amazon SNS
   * Sent to S3 bucket --> Amazon Athena --> Amazon QuickSight
-* Traffic not captures:
+* Uncaptured Traffic:
   * Traffic to Amazon DNS server
   * Traffic for Amazon Windows license activation
   * Traffic to and from 169.254.169.254 for EC2 instance metadata
@@ -419,7 +419,7 @@ Information about the AWS services that are required in the AWS Security Special
 
 ### AWS Client VPN
 
-* Connect from your computer usiing OpenVPN to your private network in AWS and on-premises
+* Connect from your computer using OpenVPN to your private network in AWS and on-premises
 * Authentication types:
   * Active Directory (Microsoft)
   * Mutual Authentication (certificates)
@@ -442,11 +442,11 @@ Information about the AWS services that are required in the AWS Security Special
     * By default it is true in default VPC and false in a new created VPC
     * Won't do anything unless enableDnsSupport = true
     * if true, assings public hostname to EC2 instance 
-  * if you use custom DNS domain names in a private hosted zone in R53, you myst set bith attributes (enableDnsSupport, & enableDnsHostnames) to true
+  * if you use custom DNS domain names in a private hosted zone in R53, you must set both attributes (enableDnsSupport, & enableDnsHostnames) to true
 
 ### VPC Endpoints
 
-* Endpoints allow you to connect to AWS servicces using a private network instead of the public www network, they sacale horizontally and are redundant
+* Endpoints allow you to connect to AWS services using a private network instead of the public www network, they sacale horizontally and are redundant
 * Types:
   * VPC endpoint gateway (S3 & DynamoDB):
     * Must create one gateway per VPC
@@ -464,8 +464,9 @@ Information about the AWS services that are required in the AWS Security Special
 * Can be attached to both Interface Endpoint and Gateway Endpoint.
 * Use case: have an SQS queue that must allow only requests from an specific VPC Endpoint and the VPC Endoint must allow only requests from an specific PrincipalOrgId
 
-### PrivateLink (Endpoint Service)
+### PrivateLink (VPC Endpoint Service)
 
+* Exposing services in your VPC to other VPC.
 * Most secure & scalable way to expose a service to 1000s of VPC (own or other accounts).
 * Requires a network load balancer (service VPC) and ENI (Customer VPC) or GWLB.
 * the solutions can be fault tolerant (multiple AZ).
@@ -486,7 +487,7 @@ Information about the AWS services that are required in the AWS Security Special
 
 >Notes:
 >
->Ephemeral Ports: For any two endpoints to establish a connection, they must use a ports, the endpoint that send the request also send a ephemeral port (random port, different ranges between O.S) to receive the response.
+>Ephemeral Ports: For any two endpoints to establish a connection, they must use a ports, the endpoint that send the request also send a ephemeral port (random port, different OS use different por ranges) to receive the response.
 >
 >AWS Managed Prefix Lists are predefined sets of IP address ranges used for controlling traffic routing and security group rules. They simplify network management by providing consistent and frequently updated IP ranges for services like AWS services and public AWS endpoints.
 
