@@ -500,7 +500,7 @@ Information about the AWS services that are required in the AWS Security Special
 * Route tables: limit which VPC can tal with other VPC
 * Works with Direct Connect, VPN Connections
 * Supports **IP Multicast** (not supported by any other AWS Service)
-* Site to site VPN **ECMP (Equal cost milti-path routing)** 
+* Site to site VPN **ECMP (Equal cost multi-path routing)** 
   * Create multiple site-to-site VPN connections to increase the bandwitch of you connections to AWS.
 * You can share transit gateway with direccct connect 
 
@@ -569,7 +569,7 @@ Information about the AWS services that are required in the AWS Security Special
   * AWS Network Firewall
   * Amazon Route 53 Resolver
   * Policies are created at the region level
-* Rules are applied to new resourcesas they are created
+* Rules are applied to new resources as they are created
 
 ### AWS API Gateway
 
@@ -595,7 +595,32 @@ Information about the AWS services that are required in the AWS Security Special
 * Artifact Reports: compliance documents from third-party auditors
 * Artifact Agreements: Status of AWS agreements
 
-### Route53 - DNSSEC
+### Route53 - DNS Security Extensions (DNSSEC)
+
+* It helps to mitigate DNS spoofing (Injection of a record int he local DNS server).
+* Works only with Public Hosted Zone.
+* Validate that a DNS response came from Route53 and has not been tampered with
+* Route53 Cryptographically signs each recod in the hosted zone
+* Keys can be created:
+  * Managed by you: Key-signing key (KSK)
+  * Managed by AWS: Zone-Signing Key (ZSK)
+* Enforces a TTL of one week (Max).
+* Enable DNSSEC on a hosted zone:
+  * Step 1 - prepare for DNSSEC sgining (Lower TTL and SOA)
+  * Step 2 - Enable DNSSEC signing and create a KSK
+  * Step 3 - Establish chain of trust
+  * Step 4 - Monitoring --> Cloud Watch alarms: DNSSECInternalFailure and DNSSECKey SigningKeysNeedingAction
+
+### AWS Network Firewall
+
+* Protect your entire Amazon VPC from layer 3 to layer 7
+* you can inspect in any direction
+* Internally uses the AWS Gateway Load Balancer
+* Rules can be centrally manageed cross-account by AWS Firewall Manager to apply to many VPCs
+Supports 1000s of rules
+* Traffic filtering
+* Send logs of rule matches to Amazon S3, CloudWatch Logs, Kinesis Data Firehose
+
 
 
 ---
