@@ -621,12 +621,96 @@ Supports 1000s of rules
 * Traffic filtering
 * Send logs of rule matches to Amazon S3, CloudWatch Logs, Kinesis Data Firehose
 
+### AWS SES
 
+* Fully managed service to send emails securely, globally and at scale.
+* Allows inbound/outbound emails.
+* Support DKIM and SPF
+* Configuration Sets (to customize and analyze your emails send events)
+  * Event destinations:
+    * Kinesis Data Firehouse
+    * SNS
+  * IP pool management
+
+## Identity and Access Management
+
+### IAM Policies in Depth
+
+* IAM Policies Structure:
+  * Version > Policy Language Version (always 2012-10-17)
+  * Id > Policy Identifier (Optional)
+  * Statement > Array with one or more statements
+    * Sid > Statement identifier (optional)
+    * Effect > Allow or Deny access
+    * Principal > Account/user/role to which this policy applied to
+    * Action > List of actions this policy allows or deny
+    * Resource > List of resources to which the actions applied to
+    * Condition > Conditions for when this Policy is in effect (optional)
+* NotAction: Provide access to all the actions in an AWS service, except for the actions specified in NotAction
+* NotAction with Effect> Deny: Deny access to all the listed resources except for the actions specified in the NotAction
+```json
+{
+  "Effect": "Deny",
+  "NotAction": "iam:*",
+  "Resource": "*"
+  ...
+}
+in this example the policy will deny access to all resources except IAM 
+```
+* Action | not action & Allow | Deny:
+```json
+{
+  "Effect": "Allow",
+  "Action": ["iam:*"],
+  "Resource": "*"
+  ...
+}
+
+Allows IAM
+```
+
+```json
+{
+  "Effect": "Deny",
+  "Action": ["iam:*"],
+  "Resource": "*"
+  ...
+}
+Deny IAM
+```
+
+```json
+{
+  "Effect": "Allow",
+  "NotAction": ["iam:*"],
+  "Resource": "*"
+  ...
+}
+Allow everything but IAM
+```
+
+```json
+{
+  "Effect": "Deny",
+  "NotAction": ["iam:*"],
+  "Resource": "*"
+  ...
+}
+Deny Everything but IAM
+```
+* Principal Options:
+  * AWS Account and Root User
+  * IAM Roles
+  * IAM Roles Sessions
+  * IAM Users
+  * Federated User Sessions
+  * AWS Services
+  * All principals (```"principal": "*", "principal": "{"aws":"*"}"```)
 
 ---
 
 
-##  Security in the AWS cloud
+##  (old) Security in the AWS cloud
 
 * Confidentiality
 * Integrity
