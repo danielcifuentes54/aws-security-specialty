@@ -707,6 +707,41 @@ Deny Everything but IAM
   * AWS Services
   * All principals (```"principal": "*", "principal": "{"aws":"*"}"```)
 
+* IAM Condition - Condition Operators
+  * StringEquals / StringNotEquals
+  * StringLike / StringNotLike
+  * DateEquals / DateLessThan / DateGreaterThan
+  * ArnLike / ArnNotLike
+  * Bool
+  * IpAddress / NotIpAddress
+  
+* IAM Condition - Global Conditions:
+  * RequestedRegion
+  * PrincipalArn
+  * SourceArn (Service to Service request)
+  * CalledVia (athena, cloudformation, dynamodb, kms)
+  * SourceIp
+  * VpcSourceIp
+  * SourceVpce
+  * SourceVpc
+  * ResourceTag 
+  * PrincipalTag
+
+* IAM Permission Boundaries
+  * Supported for users and roles (not groups).
+  * Advanced feature to use a managed policy to set maximum permissions an IAM entity can get.
+  * The IAM permission boundary policy doesn't determine the specific permissions a user will receive; rather, it sets the limits or boundaries for the policies that will be created
+
+* IAM Policy Evaluation
+  * Logic: 
+    * By default, all requests are implicity denied except for the AWS account root user.
+    * An explicit allow in an identity-based or resource-based policy overrides the default deny (1)
+    * If a permissions boundary, Organizations SCP, or session policy is present, an explicit allow is used to limit actions. Anything not explicitly allowed is an implicit deny and may override the decision in (2)
+    * An explicit deny in any policy overrides any allows
+  * Croos-Account Access Policy Evaluation Logic
+    * Both Accounts may allow the request (example: in an identity-based policy in account A and in an resource-based policy in account b)
+
+
 ---
 
 
