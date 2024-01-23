@@ -741,6 +741,82 @@ Deny Everything but IAM
   * Croos-Account Access Policy Evaluation Logic
     * Both Accounts may allow the request (example: in an identity-based policy in account A and in an resource-based policy in account b)
 
+* IAM Roles vs Resource Based Policies
+  * You have two options for permissions in a cross account:
+    1. attaching a recource-based policy to a resource (example: S3 bucket policy)
+      * The principal does not have to give up his permissions
+      * Supported by many services like: Amazon S3 buckets, SNS topics, SQS queues, etc
+      * Permanent authotization (as long as it exists in the resource-based policy)
+      * You can usse aws:PrincipalOrgID to allow access to the resource only to the organization
+    2. using a role as a proxy
+      * When you assume a role (user, application or service), you give up your original permissions and take the permissions assigned to the role
+      * permissions expire over time.
+
+* ABAC - Attribute-Based Access Control
+  * Instead of creating IAM roles for every team, use ABAC to group attributes to identify which resources a set of users can access
+  * Allow operations when the principal's tags matches the resource tag
+  * Require fewer policies (you do not create different policies for different job functions)
+  * Permissions automatically granted based on attributes
+
+* IAM MFA:
+  * if a password is stolen or hacked, the account is not compromised.
+  * options:
+    * Virtual MFA device
+    * Universal 2nd Factor (U2F) Security Key
+    * Hardware Key Fob MFA Device
+    * Hardware Key Fob MFA Device for AWS GovCloud (US)
+  * You can force MFA in the following ways:
+    * Amazon S3 MFA delete (Versioning must be enabled)
+    * IAM Conditions - MultiFactorAuthPresent (Compatible with the AWS Console and the AWS CLI)
+      ```json
+      {
+        "Effect": "Deny",
+        "Action": ["ec2:TerminateInstance"],
+        "Resource": "*",
+        "Condition": {
+          "BoolIfExists":{
+            "aws:MultiFactorAuthPresent": false
+          }
+        }
+        ...
+      }
+      Deny if multi factor is not present, in another statement you can allow other actions (no critical actions) if the MFA is not present
+      ```
+    * IAM Conditions - MultiFactorAuthAge (Grant acces only within a specified time after MFA authentication)
+  * If you have an issue deleting virtual mfa device this is because the user began assigning a virtual MFA and then cancelled the process, to fix this issue, the administraror must use the AWS CLI or AWS API to remove the existing but deactivated device
+
+* IAM Credentials Report
+  * IAM Users and the status of their passwords, access keys, and MFA devices.
+  * For automatic remediation use AWS Config with a rule that trigger an SSM Automation to rotate the access keys and then send a notifications through SNS , jira, slack, api endpoints, etc.
+
+* PassRole to Services
+  * You can grant users permissions to pass an IAM role to an AWS service
+  * Grant iam:PassRole permission to he user's IAM user, role or group
+    ```json
+    {
+      "Effect": "Allow",
+      "Action": ["iam:GetRole", "iam:PassRole"],
+      "Resource": "arn:aws:iam:123456789:role:/EC2-roles-for-*",
+      ...
+    }
+    ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ---
 
