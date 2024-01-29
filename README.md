@@ -752,61 +752,164 @@ Deny Everything but IAM
       * When you assume a role (user, application or service), you give up your original permissions and take the permissions assigned to the role
       * permissions expire over time.
 
-* ABAC - Attribute-Based Access Control
-  * Instead of creating IAM roles for every team, use ABAC to group attributes to identify which resources a set of users can access
-  * Allow operations when the principal's tags matches the resource tag
-  * Require fewer policies (you do not create different policies for different job functions)
-  * Permissions automatically granted based on attributes
+### ABAC - Attribute-Based Access Control
 
-* IAM MFA:
-  * if a password is stolen or hacked, the account is not compromised.
-  * options:
-    * Virtual MFA device
-    * Universal 2nd Factor (U2F) Security Key
-    * Hardware Key Fob MFA Device
-    * Hardware Key Fob MFA Device for AWS GovCloud (US)
-  * You can force MFA in the following ways:
-    * Amazon S3 MFA delete (Versioning must be enabled)
-    * IAM Conditions - MultiFactorAuthPresent (Compatible with the AWS Console and the AWS CLI)
-      ```json
-      {
-        "Effect": "Deny",
-        "Action": ["ec2:TerminateInstance"],
-        "Resource": "*",
-        "Condition": {
-          "BoolIfExists":{
-            "aws:MultiFactorAuthPresent": false
-          }
-        }
-        ...
-      }
-      Deny if multi factor is not present, in another statement you can allow other actions (no critical actions) if the MFA is not present
-      ```
-    * IAM Conditions - MultiFactorAuthAge (Grant acces only within a specified time after MFA authentication)
-  * If you have an issue deleting virtual mfa device this is because the user began assigning a virtual MFA and then cancelled the process, to fix this issue, the administraror must use the AWS CLI or AWS API to remove the existing but deactivated device
+* Instead of creating IAM roles for every team, use ABAC to group attributes to identify which resources a set of users can access
+* Allow operations when the principal's tags matches the resource tag
+* Require fewer policies (you do not create different policies for different job functions)
+* Permissions automatically granted based on attributes
 
-* IAM Credentials Report
-  * IAM Users and the status of their passwords, access keys, and MFA devices.
-  * For automatic remediation use AWS Config with a rule that trigger an SSM Automation to rotate the access keys and then send a notifications through SNS , jira, slack, api endpoints, etc.
+### IAM MFA:
 
-* PassRole to Services
-  * You can grant users permissions to pass an IAM role to an AWS service
-  * Grant iam:PassRole permission to he user's IAM user, role or group
+* if a password is stolen or hacked, the account is not compromised.
+* options:
+  * Virtual MFA device
+  * Universal 2nd Factor (U2F) Security Key
+  * Hardware Key Fob MFA Device
+  * Hardware Key Fob MFA Device for AWS GovCloud (US)
+* You can force MFA in the following ways:
+  * Amazon S3 MFA delete (Versioning must be enabled)
+  * IAM Conditions - MultiFactorAuthPresent (Compatible with the AWS Console and the AWS CLI)
     ```json
     {
-      "Effect": "Allow",
-      "Action": ["iam:GetRole", "iam:PassRole"],
-      "Resource": "arn:aws:iam:123456789:role:/EC2-roles-for-*",
+      "Effect": "Deny",
+      "Action": ["ec2:TerminateInstance"],
+      "Resource": "*",
+      "Condition": {
+        "BoolIfExists":{
+          "aws:MultiFactorAuthPresent": false
+        }
+      }
       ...
     }
+    Deny if multi factor is not present, in another statement you can allow other actions (no critical actions) if the MFA is not present
     ```
+  * IAM Conditions - MultiFactorAuthAge (Grant acces only within a specified time after MFA authentication)
+* If you have an issue deleting virtual mfa device this is because the user began assigning a virtual MFA and then cancelled the process, to fix this issue, the administraror must use the AWS CLI or AWS API to remove the existing but deactivated device
 
+### IAM Credentials Report
 
+* IAM Users and the status of their passwords, access keys, and MFA devices.
+* For automatic remediation use AWS Config with a rule that trigger an SSM Automation to rotate the access keys and then send a notifications through SNS , jira, slack, api endpoints, etc.
 
+### PassRole to Services
 
+* You can grant users permissions to pass an IAM role to an AWS service
+* Grant iam:PassRole permission to he user's IAM user, role or group
+  ```json
+  {
+    "Effect": "Allow",
+    "Action": ["iam:GetRole", "iam:PassRole"],
+    "Resource": "arn:aws:iam:123456789:role:/EC2-roles-for-*",
+    ...
+  }
+  ```
 
+### AWS STS - Security Token Service
 
+* Allow to grant limited and temporary access to AWS
+* Token is valid between 15 to 60 min
+* You can use STS with:
+  * AssumeRole
+  * AssumeRoleWithSAML
+  * AssumeRoleWithWebIdentity
+  * GetSessionToken
+* Steps to assume a role:
+  * Define an IAM role
+  * Define which principals can access this IAM role
+  * Use AWS STS to retrieve credentials and impersonate the IAM role (AsummeRole API)
+* Versions:
+  * STS V1:
+    * Global single endpoints "https://sts.amazonaws.com"
+    * Only support regions enable by default (you can enable "all regions")
+    * Does not work for new regions
+  * STS V2:
+    * Regional STS endpoints for all regions, reduce latency
+    * STS Tokens from regional endpoints (STS V2) are available in all AWS regions
+  * Error: An error ocurred (AuthFailure) when calling the DescribeInstances operation: AWS was not able to validate the providede access credentials
+    * Solution:
+      * Use regional endpoint (V2)
+      * Configure STS global enpoint to issue STS tokens V2
 
+### STS External ID
+
+* Piece of data that can be passed to AssumeRole API, allowing the IAM role to be assumed only if this value is present
+* Prevet any other customer from tricking 3rd party into unwittingly accessing your resources
+  ```json
+  {
+    "Effect": "Allow",
+    "Principal": {"AWS": "3rd party aaccount ID"},
+    "Action": ["AssumeRole"],
+    "Condition": {
+      "StringEquals": {"sts:ExternalId":"12345"}
+    }
+    "Resource": "arn:aws:iam:123456789:role:/EC2-roles-for-*",
+    ...
+  }
+  ```
+
+### Revoking IAM Role Temporary Credentials
+
+* Users usually have a long session duration time (e.g 12 hours), if credentials are exposed, they can be used for the duration of the session
+* Immediately revoke all permissions to the IA role's credentials issued before a certain time.
+* You can find the option called "Revoke Sessions" in the console, this option will add the following policy to your role:
+  ```json
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Deny",
+            "Action": ["*"],
+            "Resource": ["*"],
+            "Condition": {
+                "DateLessThan": {
+                    "aws:TokenIssueTime": "[policy creation time]"
+                }
+            }
+        }
+    ]
+  }
+  ```
+
+### AWS EC2 Instance Metadata Service (IMDS)
+
+* Information about EC2 instance (e.g hostname, instance type, network settings, get temporary credentials, placement, security-groups, tags)
+* Metadata is stored in key-value pairs 
+* IMDS Service endpoint: http://169.254.169.254/latest/meta-data
+* Instance role works calling the IMDS endpoint (http://169.254.169.254/latest/meta-data/iam/security-credentials/role-name) for temporary credentials 
+* You can restric IMDS using local firewall or turning off access using AWS console or AWS CLI (HttpEndpoint=false)
+* IMDSv1 vs IMDSv2:
+  * You can force Metadata version 2 at instance Launch, or use cloudwat to check when the IMDSv1 is used (MetadataNoToken metric)
+  * You can create policy based on the IMDS version using the following condition:
+    ```json
+    {
+      "Condition": {
+        "NumericLessThan": {"ec2:RoleDelivery":"2.0"}
+      }
+    }
+    ```
+  * Also you can create a policy to prevent launch of EC2 instance using IMDSv1
+    ```json
+    {
+      "Condition": {
+        "StringNotEquals": {"ec2:MetadataHttpTokens":"required"}
+      }
+    }
+    ```
+  * IMDSv1: 
+    * Accessing http://169.254.169.254/latest/meta-data directly 
+  * IMDSv2:
+    * More secure and is done in two steps
+      1. Get session token (limited validity) - using headers & PUT: `$TOKEN='curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"'`
+      2. Use Session token IMDSv2 Calls - using headers: `curl http://169.254.169.254/latest/meta-data/profile -H "X-aws-ec2-metadata-token: $TOKEN"`
+
+### S3 - Authorization Evaluation Process
+
+* User Context: Is the IAM principal authorized by the parent AWS account (IAM Policy)
+* Bucket Context: Evaluate the policies of the AWS account that owns the bucket (check for explicit Deny)
+* Object Context: Requester must have permission from the object owner (sing Object ACL)
+  * If you want to own all objects in your bucket and only use Bucket Policy and IAM-Based Plicies to grant access, enable **Bucket Owner Enforced for Object Ownership**
+* There are bucket operations (s3:ListBucket) and object operations (s3:GetObject)
 
 
 
