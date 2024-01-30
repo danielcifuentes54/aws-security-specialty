@@ -911,7 +911,21 @@ Deny Everything but IAM
   * If you want to own all objects in your bucket and only use Bucket Policy and IAM-Based Plicies to grant access, enable **Bucket Owner Enforced for Object Ownership**
 * There are bucket operations (s3:ListBucket) and object operations (s3:GetObject)
 
+### S3 - Cross Account Access
 
+* Ways to grant cross-account access to S3 objects:
+  * IAM Policies and S3 Bucket Policy
+  * IAM Policies and Access Control lists (ACLs)
+    * Only works if **bucket owner enforced setting = disabled**
+    * By default, all newly created buckets have **bucket owner enforced setting = Enabled**, ACL are NOT recommended (& disabled by default since Apr 2023)
+    * When you use ACLs, there is an object owner, in ths case the user have to give permissions to the bucket owner
+      * to grant permissions you need to us an ACL-soecific headers with full permissions (s3:x-amz-grant-full-control) or using a canned ACL (s3:x-amz-acl):
+        * s3:x-amz-acl: private
+        * s3:x-amz-acl: public-read
+        * s3:x-amz-acl: public-read-write
+  * Cross-Account IAM Roles
+    * To centralize permission management when providing cross-account access to multiple services
+    * Bucket policy is not required as the API calls to S3 come from eithin the account (through the assumed IAM role)
 
 
 
