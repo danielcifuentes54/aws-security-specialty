@@ -927,13 +927,67 @@ Deny Everything but IAM
     * To centralize permission management when providing cross-account access to multiple services
     * Bucket policy is not required as the API calls to S3 come from eithin the account (through the assumed IAM role)
 
+### VPC Endpoint Strategy S3
+
+* VPC Gateway Endpoint for Amazon S3:
+  * Only Accessed by resources in the VPC where it's created
+  * Make sure DNS support is enabled
+  * No Cost
+* VPC interface endpoint for S3:
+  * ENI(s) are deploed in your subnets
+  * Can access from on-premises (VPN or Direct Connect)
+  * Costs $0.01 per hour per AZ
 
 
+## VPC (From AWS Solutions Architect Professional)
 
+### VPC Basics
 
+* IP's
+  * CIDR: Block of IP address, example: 192.168.0.0/26 - 192.168.0.63 (64 ip)
+  * Private IP: 
+    * 10.0.0.0 - 10.255.255.255 (10.0.0.0/8) - Big Networks
+    * 172.16.0.0 - 172.31.255.255 (172.16.0.0/12)
+    * 192.168.0.0 - 192.168.255.255 (192.168.0.0/16) Home Networks
+  * Public IP: All the rest
+* VPC:
+  * Must have a defined list of CIDR blocks (min size is /28 max size is /16 (65536 IP address))
+  * VPC is private so only private IP CIDR ranges are allowed
+* Subnets
+  * Within a VPC, defined as a CIDR that is a subset of the VPC CIDR
+  * All the instances within subnets get a private IP
+  * Fist 4 IP and last one in every sunet is reseverd by AWS.
+* Route Tables
+  * Used to control where the network traffic is directed to
+  * Can be associated within specific subnets
+  * The "most specific" routin rule is always followed (192.168.0.1/24 beats 0.0.0.0/0)
+* Internet Gateay (IGW)
+  * Helps our VPC connect to the internet, HA, scales horizontally
+  * Acts as a NAT for instances that have a public IPv4 or public IPv6
+* Public Subnets
+  * Has a route table that sends 0.0.0.0/0 to an IGW
+  * Instances must have a public IPv4 to talk to the internet
+* Private Subnets
+  * Access internet with a NAT instance or NAT Gateway setup in a public subnet (Must edit routes so that 0.0.0.0/0 routes traffic to the NAT)
+* NAT instance: 
+  * It is an EC2 instance in a public subnet, not resilient to failure, cheap, must disable source/destination check (EC2 setting)
+  * You need edit the route in your private subnet to route 0.0.0.0/0 to you NAT instance
+* NAT Gateway
+  * Managed NAT solution, scales automatically, resilient, has an elastic ip, external services see the IP of the NAT Gateway as the sorce
+* Network ACL (NACL)
+  * Stateless (reurn traffic must be explicitly allowed by rules) firewall, support allow and deny rules
+* Security Groups
+  * Applied at the instance level, only support for allow rules (no deny), it is stateful (return traffic is automatically allowed, regardless of rules)
+  * Can reference other security groups in the same region (peered VPC, cross-account)
 
+### VPC Peering
 
-
+* Connect two VPC (you must update route table in each VPC's subnets), privately using AWS network, must not overlapping any CIDR, and it is not trasitive
+* You can do VPC peering with another AWS account
+* VPC peering can work inter-region, cross account
+* You can refer a security group of a peered VPC (work cross account)
+* Longest Prefix Match ("most specific route"), it is used in the route tables to know where redirect a traffic in cases where an VPC are peered with ther two vpc with the same CIDR
+* No edge to edge routing, vpc peering does not support edge to edge routing for NAT devices
 
 ---
 
