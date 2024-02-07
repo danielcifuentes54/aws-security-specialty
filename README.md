@@ -989,6 +989,35 @@ Deny Everything but IAM
 * Longest Prefix Match ("most specific route"), it is used in the route tables to know where redirect a traffic in cases where an VPC are peered with ther two vpc with the same CIDR
 * No edge to edge routing, vpc peering does not support edge to edge routing for NAT devices
 
+### Transit Gateway
+
+* For having transitive peering between thousands of VPC and on-premise, hub-and-spoke (star) connection.
+* It is transitive and edge to edge routing, you can limit which VPC can talk with other VPC
+* Regional resource, can work cross-region 
+* Share cross-account using Resource Access Manager (RAM)
+* Works with direct connect gateway, VPN connections, instances in a VPC can access a NAT Gateway, NLB, privateLink and EFS in other VPCs
+* Supports **Ip multicast** (Not supported by any other AWS service)
+
+### VPC Endpoints
+
+* Allow you to connect to AWS services susing a private network, it scales horizontally and redundant
+* VPC Endpoint Gateway (only wors for S3 & DynamoDB)
+  * Must update route tables entries
+  * Gateway is defined at the vpc level
+  * DNS resolution must be enabled in the VPC
+  * The same public hostname for S3 can be used
+  * Gateway endpoint cannot be extended out of a VPC (VPN, DX, TGW, peering)
+* VPC Endpoint Interface (All except DynamoDB)
+  * Provision an ENI that will have a private endpoint interface hostname
+  * Leverage Security Groups for security
+  * Interface can be accessed from direct connect and site to site VPN
+  * You can access with the public DNS if the **private DNS setting is enabled** also the vpc settings 2DNS hostnames and DNS support must be true
+* VPC Endpoints Policies:
+  * JSON documents to control acces to services
+  * Another level of protection (VPC Endpoint Level), does not override or replace IAM user policies or service-specific policies (such as S3 bucket policies)
+  * The IAM user can still use the resource outside the VPC endpoint unless you add a policy to deny any action not done through the vpc endpoint (`Condition:"aws:sourceVpce":"vpce-11111"` or `Condition:"aws:sourceVpc":"vpc-11111"`)
+  * To restrict access based on private traffic use sourceVpce or sourceVpc conditions, in the case you want to restric public ip you have to use sourceIP condition
+
 ---
 
 
