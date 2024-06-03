@@ -1018,162 +1018,82 @@ Deny Everything but IAM
   * The IAM user can still use the resource outside the VPC endpoint unless you add a policy to deny any action not done through the vpc endpoint (`Condition:"aws:sourceVpce":"vpce-11111"` or `Condition:"aws:sourceVpc":"vpc-11111"`)
   * To restrict access based on private traffic use sourceVpce or sourceVpc conditions, in the case you want to restric public ip you have to use sourceIP condition
 
+### AWS PrivateLink (VPC Endpoint Services)
+
+* Most secure & scalable way to expose a service to 1000s of VPC (own or other accounts).
+* Does not require VPC peering, internet gateway, NAT, route tables
+* Requires a network load balancer (service VPC) and ENI (Customer VPC) or GWLB.
+* the solutions can be fault tolerant (multiple AZ).
+
+### Site to Site VPN (AWS managed VPN)
+
+* To establish a secure and private connection between your on-premises network or data center and your virtual private cloud (VPC) on AWS
+* setup:
+  * on-premise:
+    * setup hardware or software VPN that must to be accessible through internet
+  * AWS
+    * Setup a virtual private gateway (VGW) and attach to the vpc
+    * Setup a customer gateway (CGW) to point the on-premise vpn
+* Two vpn connections (tunnels) are created for redundancy, encrypted using IPsec
+* You can use aws global acceletaror to make it globally
+* You can propagate to reach the on-premises or aws instances, for this you must do:
+  * Static Routing: Update routing tables
+  * Dynamic Routing: Use BGP (Border Gateway Protocol) to sahre routes automatically just need to specify the ASN (Autonomus System Number) of CGW and VGW
+* To have internet on you S2S you can use NAT instance (on the aws or on premises side), AWS NAT Gateway won't allow the internet traffic due restrictions
+* AWS VPN Cloud Hub can conect up to 10 CGW for each PGW
+* AWS Recommend creating a separate VPN connection for each customer VPC, (create VGW as many VPC you have)
+  * To address this issue, you have two viable options: Direct Connect or leveraging shared services architecture. With shared services architecture, all VPCs are interconnected either through VPC peering or transit gateway. However, only one VPC requires a site-to-site VPN connection. This particular VPC functions as a hub for shared services, housing replicated or proxy services. Consequently, all other VPCs can communicate seamlessly through this central hub.
+
+### AWS Client VPN
+
+* Allows to connect from your computer using OpenVPNto your private network in AWS and on-premises
+* Enable to get a private connection with AWS and therefore any network architecture on AWS should work with client VPN
+
+### Direct Connect
+
+* Provides a dedicated private connection (More expensive than run a VPN solution) from a remote network to you VPC (Through VIF).
+* Dedicated connection must be setup between you data center and AWS direct connections locations
+
+### On-premises Redundant Connections
+
+* Solutions to have redundant connections:
+  * Active-Active VPN connections (have to on-premises datacenter connected, with a CW for each of them conected to one VGW)
+  * Multiple connections at multiple AWS Direct locations (have to on-premises datacenter connected, with direct connect)
+  * Backup VPN location (have both direct connect and S2S connection)
+  * Direct Connect Gateway - SiteLink (on-premise datacenters don't need to have connection)
+
+
+## Management and Security Governance
+
+### AWS Organizations
+
+* Allows to manage multiple AWS accounts
+* The main account is the management account and other accounts are member accounts
+* Member accounts can only be part of one organization
+* Consolidated billing across all accounts - single payment method (princing benefits from aggreagated usage)
+* Shared  reserved instances and saving plans discounts across accounts
+* Advantages:
+  * Multi account vs one account multi VPC
+  * Use tagging standards for billing purposes
+  * Enable CloudTrail on all accounts, send logs to central S3 account
+  * Send cloudwatch logs to central logging account.
+  * Establish cross Account Roles fo Admin purposes.
+  * You can use aws:principalOrgID condition to restrict access to IAM principals from accounts in an AWS organizations
+  * Service Control Policies (SCP)
+    * IAM Policies applied to OU or accounts to restrict Users and Roles
+    * They do not apply to the management account (full admin power always)
+    * Must have an explicit allow (does not allow anything by default)
+
+### AWS Control Tower
+
+* Easy way to set up and govern a secure and compliant multi-account AWS environment based on best practices
+* Benefits:
+  * Automate the set up of your environment in a few clicks
+  * Automate ongoing policy management using guardrails 
+    * it has mandatory, strongly recommended and elective levels
+  * Detect Policy violations and remediate them
+  * Monitor compliance through an interactive dashboard
+* AWS Control Tower runs on top of AWS Organizations
+  * It automatically sets up AWS Organizations to organize accounts and implement SCPs
+
 ---
-
-
-##  (old) Security in the AWS cloud
-
-* Confidentiality
-* Integrity
-* Availability
-
-- Visibility (AWS Config)
-- Auditability (AWS CloudTrail)
-- Controllability (AWS IAM)
-- Agility (AWS CloudFormation)
-- Automation (AWS CloudFormation)
-
-## AWS Shared Responsability Model
-
-* AWS is responsible for the security OF the cloud
-* Customers are responsible for their security IN the cloud
-
-- AWS Infrastructure Services
-- AWS container Services 
-- AWS Abstracted Services
-- MSO responsability Model
-
-## Incident Response Overview
-
-* AWS Cloud Adoption Framework Security Perspective https://aws.amazon.com/es/professional-services/CAF/
-* AWS well architected https://www.wellarchitectedlabs.com
-  * AWS has a well architected tool
-
-### Common Incidents
-
-- Compromised User Credentials
-- Insufficient data integrity
-- Overlay Permissive Access
-
-## DevOps With Security Engineering
-
-* Penetration Testing https://aws.amazon.com/security/penetration-testing/
-* https://aws.amazon.com/security/?nc=sn&loc=0
-
-## AWS Entry Points
-
-* AWS managment console
-* AWS CLI
-* AWS SDKs
-* Another AWS Service
-
-## STS
-
-* It is used always when you use a role
-* you can have sessions to limit access on the time
-## IAM Policy Types
-
-* AWS Managed 
-* Customer Managed
-* Inline
-
-### Understanding IAM Policies
-
-* [Policy Generator](https://awspolicygen.s3.amazonaws.com/policygen.html)
-
-* Granting Access Review: 
-  1. Authorization (identity-based policies + Resource-based Policies)
-  2. Actions
-  3. Resources
-  4. Effect
-
-* IAM Policy elements:
-  1. Effect (mandatory)
-  2. Action (mandatory)
-  3. Resource (mandatory)
-  4. [Condition](https://docs.aws.amazon.com/es_es/IAM/latest/UserGuide/reference_policies_elements_condition.html)
-  5. Principal (only for resource based policies)
-
-* [Attribute-based access control (ABAC)](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_attribute-based-access-control.html)
-
-* IAM Access Analyzer: Service to monitoring resource access
-
-* [Not Action](https://docs.aws.amazon.com/es_es/IAM/latest/UserGuide/reference_policies_elements_notaction.html)
-
-### Permissions Boundary
-
-*  A permissions boundary is an advanced feature for using a managed policy to set the maximum permissions that an identity-based policy can grant to an IAM entity
-
-# Security Considerations: Web Applications
-
-# Application Security
-
-## Amazon EC2 Security Considerations
-
-* Amazon EC2 Key Pairs
-* Instance Metadata Service (IMDS) 
-  * `curl http://169.254.169.254/latest/meta-data`
-
-## AMI For Security and Compliance
-
-* Incident response can use AMIs to spin up machines for forensics
-* Customize AMIs via baking
-* Customize AMIs via bootstrapping
-* Protection:
-  - Disable unsecure applications.
-  - Miniize exposure.
-  - Protect Credentials.
-  - Protect system and log data.
-  - Use EC2 image builder.
-
-## Amazon Inspector
-
-* Help to improve security and compliance of applications:
-  - Automation of security assesments
-  - Built-in library of AWS security knowledge and best practices 
-  - Guidance on resolving security findings
-
-## AWS Sytems Manager
-
-* System Inventory
-* OS patches updates
-* Automated AMI creation
-* OS and application configuration
-* Session Manager
-
-# Data Security
-
-* Threats in Data Protection:
-  - Information Disclosure
-  - Data Integrity Compromise
-  - Accidental Deletion
-  - System/HW/SW Availability
-
-## Protecting Data at rest: S3
-
-* Data Encryption on S3:
-  - SSE-C
-  - SSE-S3
-  - SSE-KMS
-* Amazon S3 Resource Protection:
-  - Object ACLs
-  - Bucket ACLs
-  - Bucket Policies
-  - IAM Policies
-* Amazon S3 Versioning
-* Amazon S3 Object Lock
-* Amazon S3 - Block public access
-* Cross-Region Replication
-* AWS S3 Access Analyzer
-* AWs S3 Access Points
-
-## Protecting Data at rest: Databases
-
-* Amazon RDS Protection:
-  * Network Isolation
-  * Access Control
-  * Data Protection:
-    * In Transit
-    * At Rest
-
-* DynamoDB
