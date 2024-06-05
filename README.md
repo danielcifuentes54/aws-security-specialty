@@ -68,11 +68,11 @@ Information about the AWS services that are required in the AWS Security Special
   4. Amazon Aurora
   5. Amazon Api Gateways
   6. Amazon Lambda and Lambda Edge functions
-  7. Amazon Ligthsail resources
+  7. Amazon Lightsail resources
   8. Amazon Elastic Beanstalk environments
 
 * There are also prohibited activities:
-  * DNS zome walking
+  * DNS zone walking
   * DDOS
   * Port flooding
   * protocol flooding
@@ -305,13 +305,12 @@ Information about the AWS services that are required in the AWS Security Special
 * Commonly used with Amazon Quicksight for reporting/dashboards
 * Performance Improvement:
   * Use columnar data for cost-savings (less scan)
-    * Apache Parquet or ORC is recommended
+    * Apache Parquet or ORC (Optimized Row Columnar) is recommended
     * use Amazon Glue to convert your data to Parquet or ORC
   * Compress Data
   * Partition dataset in S3 --> s3://athena-example/flight/parquet/year=1991/month=1/day=1/
   * Use larger files (> 128 MB)
 * Federated Query: using a data source connector on lambda you can connect to different services like RDS, ElasticCache, Redshift, etc to run SQL queries and store the result on Amazon S3
-
 
 ### AWS CloudTrail
 
@@ -325,7 +324,6 @@ Information about the AWS services that are required in the AWS Security Special
 * Organization Trails: A trail that will log all events for all AWS accounts in an AWS organization.
 * You can create alarms, using CloudWatch logs where are hosted all the cloud trail events
 * You can create an Athena table directly from CloudTrail
-
 
 ### Amazon Macie
 
@@ -380,7 +378,7 @@ Information about the AWS services that are required in the AWS Security Special
 * Network Access Scope: Json document that contains conditions to define your network security policy (e.g detect public databases).
 * Evaluate against the Json to find issues or demostrate compliance
 
-### Route53 Query Loggin
+### Route53 DNS Query Loggin
 
 * Log information about public DNS queries Route53 Resolver receives
 * only for public hosted zones
@@ -502,11 +500,11 @@ Information about the AWS services that are required in the AWS Security Special
 * Supports **IP Multicast** (not supported by any other AWS Service)
 * Site to site VPN **ECMP (Equal cost multi-path routing)** 
   * Create multiple site-to-site VPN connections to increase the bandwitch of you connections to AWS.
-* You can share transit gateway with direccct connect 
+* You can share transit gateway with direct connect 
 
 ### AWS Cloudfront (CDN - Content Delivery Network)
 
-* 216 Point of presence globally (edge locations), improves user experienc, improving read performance, content is chached at the edge.
+* 216 Point of presence globally (edge locations), improves user experience, improving read performance, content is chached at the edge.
 * DDoS protection (because worlwide) integration with shield, and WAF
 * Origins:
   * S3 bucket
@@ -597,7 +595,7 @@ Information about the AWS services that are required in the AWS Security Special
 
 ### Route53 - DNS Security Extensions (DNSSEC)
 
-* It helps to mitigate DNS spoofing (Injection of a record int he local DNS server).
+* It helps to mitigate DNS spoofing (Injection of a record in the local DNS server).
 * Works only with Public Hosted Zone.
 * Validate that a DNS response came from Route53 and has not been tampered with
 * Route53 Cryptographically signs each recod in the hosted zone
@@ -606,7 +604,7 @@ Information about the AWS services that are required in the AWS Security Special
   * Managed by AWS: Zone-Signing Key (ZSK)
 * Enforces a TTL of one week (Max).
 * Enable DNSSEC on a hosted zone:
-  * Step 1 - prepare for DNSSEC sgining (Lower TTL and SOA)
+  * Step 1 - prepare for DNSSEC signing (Lower TTL and SOA)
   * Step 2 - Enable DNSSEC signing and create a KSK
   * Step 3 - Establish chain of trust
   * Step 4 - Monitoring --> Cloud Watch alarms: DNSSECInternalFailure and DNSSECKey SigningKeysNeedingAction
@@ -795,7 +793,7 @@ Deny Everything but IAM
 ### PassRole to Services
 
 * You can grant users permissions to pass an IAM role to an AWS service
-* Grant iam:PassRole permission to he user's IAM user, role or group
+* Grant iam:PassRole permission to the user's IAM user, role or group
   ```json
   {
     "Effect": "Allow",
@@ -834,7 +832,7 @@ Deny Everything but IAM
 ### STS External ID
 
 * Piece of data that can be passed to AssumeRole API, allowing the IAM role to be assumed only if this value is present
-* Prevet any other customer from tricking 3rd party into unwittingly accessing your resources
+* Prevent any other customer from tricking 3rd party into unwittingly accessing your resources
   ```json
   {
     "Effect": "Allow",
@@ -851,7 +849,7 @@ Deny Everything but IAM
 ### Revoking IAM Role Temporary Credentials
 
 * Users usually have a long session duration time (e.g 12 hours), if credentials are exposed, they can be used for the duration of the session
-* Immediately revoke all permissions to the IA role's credentials issued before a certain time.
+* Immediately revoke all permissions to the IAM role's credentials issued before a certain time.
 * You can find the option called "Revoke Sessions" in the console, this option will add the following policy to your role:
   ```json
   {
@@ -879,7 +877,7 @@ Deny Everything but IAM
 * Instance role works calling the IMDS endpoint (http://169.254.169.254/latest/meta-data/iam/security-credentials/role-name) for temporary credentials 
 * You can restric IMDS using local firewall or turning off access using AWS console or AWS CLI (HttpEndpoint=false)
 * IMDSv1 vs IMDSv2:
-  * You can force Metadata version 2 at instance Launch, or use cloudwat to check when the IMDSv1 is used (MetadataNoToken metric)
+  * You can force Metadata version 2 at instance Launch, or use cloudwatch to check when the IMDSv1 is used (MetadataNoToken metric)
   * You can create policy based on the IMDS version using the following condition:
     ```json
     {
@@ -908,7 +906,7 @@ Deny Everything but IAM
 * User Context: Is the IAM principal authorized by the parent AWS account (IAM Policy)
 * Bucket Context: Evaluate the policies of the AWS account that owns the bucket (check for explicit Deny)
 * Object Context: Requester must have permission from the object owner (sing Object ACL)
-  * If you want to own all objects in your bucket and only use Bucket Policy and IAM-Based Plicies to grant access, enable **Bucket Owner Enforced for Object Ownership**
+  * If you want to own all objects in your bucket and only use Bucket Policy and IAM-Based Policies to grant access, enable **Bucket Owner Enforced for Object Ownership**
 * There are bucket operations (s3:ListBucket) and object operations (s3:GetObject)
 
 ### S3 - Cross Account Access
@@ -919,7 +917,7 @@ Deny Everything but IAM
     * Only works if **bucket owner enforced setting = disabled**
     * By default, all newly created buckets have **bucket owner enforced setting = Enabled**, ACL are NOT recommended (& disabled by default since Apr 2023)
     * When you use ACLs, there is an object owner, in ths case the user have to give permissions to the bucket owner
-      * to grant permissions you need to us an ACL-soecific headers with full permissions (s3:x-amz-grant-full-control) or using a canned ACL (s3:x-amz-acl):
+      * to grant permissions you need to use an ACL-soecific headers with full permissions (s3:x-amz-grant-full-control) or using a canned ACL (s3:x-amz-acl):
         * s3:x-amz-acl: private
         * s3:x-amz-acl: public-read
         * s3:x-amz-acl: public-read-write
@@ -986,7 +984,7 @@ Deny Everything but IAM
 * You can do VPC peering with another AWS account
 * VPC peering can work inter-region, cross account
 * You can refer a security group of a peered VPC (work cross account)
-* Longest Prefix Match ("most specific route"), it is used in the route tables to know where redirect a traffic in cases where an VPC are peered with ther two vpc with the same CIDR
+* Longest Prefix Match ("most specific route"), it is used in the route tables to know where redirect a traffic in cases where an VPC are peered with other two vpc with the same CIDR
 * No edge to edge routing, vpc peering does not support edge to edge routing for NAT devices
 
 ### Transit Gateway
@@ -1000,8 +998,8 @@ Deny Everything but IAM
 
 ### VPC Endpoints
 
-* Allow you to connect to AWS services susing a private network, it scales horizontally and redundant
-* VPC Endpoint Gateway (only wors for S3 & DynamoDB)
+* Allow you to connect to AWS services using a private network, it scales horizontally and redundant
+* VPC Endpoint Gateway (only works for S3 & DynamoDB)
   * Must update route tables entries
   * Gateway is defined at the vpc level
   * DNS resolution must be enabled in the VPC
