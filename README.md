@@ -935,7 +935,25 @@ Deny Everything but IAM
   * ENI(s) are deploed in your subnets
   * Can access from on-premises (VPN or Direct Connect)
   * Costs $0.01 per hour per AZ
+* You can restric access using `aws:SourceVpc` and `aws:SourceVpce` or `aws:SourceIp` and `aws:VpcSourceIp` (just valid when you start to use VPC endpoints)
 
+### S3 Access Point
+
+* Access Points  simplify management for S3 buckets
+* Each Access Point has:
+  * its own DNS name (Internet origin or VPC origin)
+  * an access point policy (similar to bucket policy) - manage security at scale
+* You can define the access point to be accesible only from within the VPC
+  * You must create a VPC Endpoint to access the Access Point (Gateway or interface)
+  * The VPC endpoint policy must allow access to the target bucket and access point
+* When you create an S3 access point it is so important to create an S3 policy to admit request only from the access point
+
+### S3 - Multi-Region Access Point
+
+* Provide a global endpoint that span S3 buckets in multiple AWS regions
+* Dinamically route request to the nearest S3 bucket (lowest latency)
+* Bi-directional S3 bucket replication rules are created to keep data in sync across regions.
+* Failover controls - allows you to shift requests across S3 buckets in different AWS regions within minutes (Active-Active or Active-Passive)
 
 ## VPC (From AWS Solutions Architect Professional)
 
