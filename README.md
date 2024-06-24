@@ -955,6 +955,99 @@ Deny Everything but IAM
 * Bi-directional S3 bucket replication rules are created to keep data in sync across regions.
 * Failover controls - allows you to shift requests across S3 buckets in different AWS regions within minutes (Active-Active or Active-Passive)
 
+### S3 CORS
+
+* Cross-Origin Resource Sharing (CORS).
+* Origin = scheme (protocol) + host (domain) + port.
+* Web browser mechanism to allow requests to other origins while visiting the main origin.
+* You can add a CORS configuration written in JSON on your S3 bucket
+
+### Cognito
+
+#### User Pools
+
+* Create a serverless database of user for your web & mobile apps 
+* You can setup: simple login, password reset, email & phone verification, MFA, Federated Identities (Google login)
+* Login sends back a JWT
+* Example: login with user pools and then pass the token to AWS API gateway to execute a lambda function
+* User Pool Groups: Defines the permissions for users in the group by assiging IAM role to the group, users can be in multiple groups and those ones can have a precedence value
+
+#### Identity Pools
+
+* Get identities for users so they obtain temporary AWS credentials
+* You can use as a identity source:
+  * Amazon cognito user pools
+  * Identity Provider (Google login)
+  * OpenID & SAML
+  * Custom Login Server (Developer Authenticated Identities)
+
+### Identity Federation in AWS
+
+* Give users outside of AWS permissions to access AWS resources in your account
+* You don't need to create IAM Users (User management is outside AWS)
+* Use cases:
+  * A corporate has its own identity system (e.g active directory)
+  * A Web/Mobile app that needs access to AWS resources
+* Identity Federation options
+  * SAML 2.0:
+    * Need to setup a trust between AWS IAM and SAML 2.0 identity provider (both ways)
+    * Under-the-hood: Uses the STS API AssumeRoleWithSAML
+    * It is important to keep updated the XML file on IAM (aws iam update-saml-provider) that is generated from the IdP
+  * Custom Identity Broker Application:
+    * Use only if the identity provider is not compatible with SAML 2.0
+    * Authenticates and requests temporary credentials from AWS, must determine the appropiate IAM Role
+    * Uses the STS API AssumeRole or GetFederationToken
+  * Web Identity Federation (with/out cognito) 
+    * It is recommended use cognite since this supports: anonymous users, MFA, Data Synchronization
+    * After login you can identify the user with an IAM policy variable
+
+### AWS IAM Identity Center (successor to AWS Single Sign-on)
+
+* One login SSO for all your
+  * AWS accounts in AWS organizations.
+  * Business cloud applications (e.g., Salesforce, Box, Microsoft 365,...).
+  * SAML 2.0 - enabled applications.
+  * EC2 windows instances.
+* Identity Providers
+  * Built-in identity store in IAM Identity Center.
+  * 3rd party: Active Directory (AD), OneLogin, Okta.
+* You can have permissions sets and assign them to groups
+
+### AWS Directory Services
+
+#### Microsoft Active Directory
+
+* Found on any windows server with AD domain services, it is a database of objects (user accounts, computers, printers, file shares, security groups)
+* Objects are organized in trees and a group of trees is a forest
+
+#### AWS Directory Services
+
+* AWS Managed Microsoft AD
+  * Create your own AD in AWS on a VPC, manage users locally, supports MFA
+  * Establish "trust" connections with your on-premises AD.
+  * EC2 Windows instances  can join to the domain and run traditional applications (sharepoint etc )
+  * It has different integrations like RDS for SQL server, AWS SSo
+  * Multi AZ deployment of DC (Domain controller)
+  * Automated backups and automated multi-region replication of your directory
+  * To stablish a connection you must to have a direct connect (DX) or VPN connection
+  * Can setup three kinds of forest trust:
+    * One way trust: AWS => On-premise
+    * One way trust: On-premise => AWS
+    * Two way forest trust: On-premise <=> AWS
+  * Forest trust is different than synchronization (replication is not supported), the only way to have replication is creating an instance and deploy AD (actuve directory) on this, then setup replication between on-premise AD and this instance and then configure AWS managed Microsoft AD with two way forest trust
+* AD connector 
+  * Directory Gateway (proxy) to redirect to on-premises AD, supports MFA
+  * Users are managed on the on-premises AD.
+  * No caching capabilites 
+  * you need VPN or DX
+  * Does not work with SQL Server
+* Simple AD
+  * AD-compatible managed directory on AWS
+  * Cannot be joined with on-premise AD
+  * Supports joining EC2 instances, manage users and groups
+  * Powered by Samba 4, compatible with Microsoft AD
+  * Lower cost, low scale, basic AD compatible or LDAP compatibility
+
 ## VPC (From AWS Solutions Architect Professional)
 
 ### VPC Basics
