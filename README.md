@@ -1048,6 +1048,25 @@ Deny Everything but IAM
   * Powered by Samba 4, compatible with Microsoft AD
   * Lower cost, low scale, basic AD compatible or LDAP compatibility
 
+## Data Protection
+
+### Encryption
+
+* Encryption in flight: Data is encrypted before sending and decrypted after receiving, ensuring no MIM (man in the middle attack), TLC certificates help with encryption.
+* Server Side Encryption at Rest: Data is encrypted after being received by the server and decrypted before being sent. The server needs access to a encryption and decryption keys
+* Client Side Encryption: There is not trust in the server, so the data is encrypted and decrypted by the client and the server should not be able to decrypt the data
+
+### CloudHSM
+
+* AWS CloudHSM lets you manage and access your keys on FIPS-validated hardware, protected with customer-owned, single-tenant HSM instances that run in your own Virtual Private Cloud (VPC).
+* You manage your own encryption keys entirely (not AWS).
+* CloudHSM clusters are spread across Multi AZ (HA).
+* You can integrate it with AWS services using an integration with AWS KMS (using custom key store), all the operations will be log in cloudtrail
+* You can integrate with 3rd parties like Windows Server CA
+* For sharing cluster acrross accounts you can not share cloudHSM itself, you need to share the subnets (also configurate security groups)
+
+
+
 ## VPC (From AWS Solutions Architect Professional)
 
 ### VPC Basics
